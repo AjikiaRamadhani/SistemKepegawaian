@@ -82,7 +82,7 @@ const fetchDashboardData = async () => {
     // Pakai endpoint /api/dashboard yang backend sudah hitung semuanya
     // (widget, chart, 5 pegawai terbaru) lewat query SQL -- lebih efisien
     // daripada ambil semua data pegawai lalu hitung manual di frontend.
-    const response = await $fetch('/_/backend/api/login', {
+    const response = await $fetch('http://localhost:5000/api/dashboard', {
       method: 'GET',
       headers: { Authorization: `Bearer ${token.value}` }
     });
