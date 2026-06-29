@@ -25,7 +25,6 @@
           data-bs-placement="bottom"
           type="button"
         >
-          <!-- Download SVG icon from http://tabler-icons.io/i/moon -->
           <svg
             xmlns="http://www.w3.org/2000/svg"
             class="icon"
@@ -52,7 +51,6 @@
           data-bs-placement="bottom"
           type="button"
         >
-          <!-- Download SVG icon from http://tabler-icons.io/i/moon -->
           <svg
             xmlns="http://www.w3.org/2000/svg"
             class="icon"
@@ -114,141 +112,7 @@
                       ></span>
                     </div>
                     <div class="col text-truncate">
-                      <a href="#" class="text-body d-block">Example 1</a>
-                      <div class="d-block text-secondary text-truncate mt-n1">
-                        Change deprecated html tags to text decoration classes
-                        (#29604)
-                      </div>
-                    </div>
-                    <div class="col-auto">
-                      <a href="#" class="list-group-item-actions">
-                        <!-- Download SVG icon from http://tabler-icons.io/i/star -->
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          class="icon text-muted"
-                          width="24"
-                          height="24"
-                          viewBox="0 0 24 24"
-                          stroke-width="2"
-                          stroke="currentColor"
-                          fill="none"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        >
-                          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                          <path
-                            d="M12 17.75l-6.172 3.245l1.179 -6.873l-5 -4.867l6.9 -1l3.086 -6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873z"
-                          />
-                        </svg>
-                      </a>
-                    </div>
-                  </div>
-                </div>
-                <div class="list-group-item">
-                  <div class="row align-items-center">
-                    <div class="col-auto">
-                      <span class="status-dot d-block"></span>
-                    </div>
-                    <div class="col text-truncate">
-                      <a href="#" class="text-body d-block">Example 2</a>
-                      <div class="d-block text-secondary text-truncate mt-n1">
-                        justify-content:between ⇒ justify-content:space-between
-                        (#29734)
-                      </div>
-                    </div>
-                    <div class="col-auto">
-                      <a href="#" class="list-group-item-actions show">
-                        <!-- Download SVG icon from http://tabler-icons.io/i/star -->
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          class="icon text-yellow"
-                          width="24"
-                          height="24"
-                          viewBox="0 0 24 24"
-                          stroke-width="2"
-                          stroke="currentColor"
-                          fill="none"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        >
-                          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                          <path
-                            d="M12 17.75l-6.172 3.245l1.179 -6.873l-5 -4.867l6.9 -1l3.086 -6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873z"
-                          />
-                        </svg>
-                      </a>
-                    </div>
-                  </div>
-                </div>
-                <div class="list-group-item">
-                  <div class="row align-items-center">
-                    <div class="col-auto">
-                      <span class="status-dot d-block"></span>
-                    </div>
-                    <div class="col text-truncate">
-                      <a href="#" class="text-body d-block">Example 3</a>
-                      <div class="d-block text-secondary text-truncate mt-n1">
-                        Update change-version.js (#29736)
-                      </div>
-                    </div>
-                    <div class="col-auto">
-                      <a href="#" class="list-group-item-actions">
-                        <!-- Download SVG icon from http://tabler-icons.io/i/star -->
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          class="icon text-muted"
-                          width="24"
-                          height="24"
-                          viewBox="0 0 24 24"
-                          stroke-width="2"
-                          stroke="currentColor"
-                          fill="none"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        >
-                          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                          <path
-                            d="M12 17.75l-6.172 3.245l1.179 -6.873l-5 -4.867l6.9 -1l3.086 -6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873z"
-                          />
-                        </svg>
-                      </a>
-                    </div>
-                  </div>
-                </div>
-                <div class="list-group-item">
-                  <div class="row align-items-center">
-                    <div class="col-auto">
-                      <span
-                        class="status-dot status-dot-animated bg-green d-block"
-                      ></span>
-                    </div>
-                    <div class="col text-truncate">
-                      <a href="#" class="text-body d-block">Example 4</a>
-                      <div class="d-block text-secondary text-truncate mt-n1">
-                        Regenerate package-lock.json (#29730)
-                      </div>
-                    </div>
-                    <div class="col-auto">
-                      <a href="#" class="list-group-item-actions">
-                        <!-- Download SVG icon from http://tabler-icons.io/i/star -->
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          class="icon text-muted"
-                          width="24"
-                          height="24"
-                          viewBox="0 0 24 24"
-                          stroke-width="2"
-                          stroke="currentColor"
-                          fill="none"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        >
-                          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                          <path
-                            d="M12 17.75l-6.172 3.245l1.179 -6.873l-5 -4.867l6.9 -1l3.086 -6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873z"
-                          />
-                        </svg>
-                      </a>
+                      <a href="#" class="text-body d-block">Belum ada notifikasi baru</a>
                     </div>
                   </div>
                 </div>
@@ -264,24 +128,24 @@
             data-bs-toggle="dropdown"
           >
             <span class="bg-primary text-white avatar rounded-circle">
-              {{ getInitials("User Name") }}
+              {{ getInitials(activeUser.nama) }}
             </span>
             <div class="d-none d-xl-block ps-2">
-              <div class="fw-bold">USER NAME</div>
-              <div class="mt-1 small text-primary">USER ROLE</div>
+              <div class="fw-bold">{{ activeUser.nama }}</div>
+              <div class="mt-1 small text-primary">{{ activeUser.role || activeUser.username }}</div>
             </div>
           </a>
           <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-            <a href="?page=profile" class="dropdown-item"
-              ><i class="bi bi-person me-2"></i> My Profile</a
-            >
-            <a href="?page=change-password" class="dropdown-item"
-              ><i class="bi bi-key me-2"></i> Change Password</a
-            >
+            <a href="#" class="dropdown-item" @click.prevent="alert('Fitur My Profile masih dalam tahap pengembangan')">
+              <i class="bi bi-person me-2"></i> My Profile
+            </a>
+            <a href="#" class="dropdown-item" @click.prevent="alert('Fitur Change Password masih dalam tahap pengembangan')">
+              <i class="bi bi-key me-2"></i> Change Password
+            </a>
             <div class="dropdown-divider"></div>
-            <a href="logout.php" class="dropdown-item text-danger"
-              ><i class="bi bi-box-arrow-right me-2"></i> Logout</a
-            >
+            <a href="#" class="dropdown-item text-danger" @click.prevent="handleLogout">
+              <i class="bi bi-box-arrow-right me-2"></i> Logout
+            </a>
           </div>
         </div>
       </div>
@@ -290,6 +154,46 @@
 </template>
 
 <script setup>
+import { ref, onMounted } from 'vue';
+
 const { toggleTheme } = useTheme();
 const { toggleSidebar } = useSidebar();
+
+// State User
+const activeUser = ref({
+  nama: 'Memuat...',
+  role: 'Memuat...'
+});
+
+// Ambil data user saat komponen dimuat
+onMounted(() => {
+  const userData = useCookie('user_data');
+  if (userData.value) {
+    activeUser.value = typeof userData.value === 'string'
+      ? JSON.parse(userData.value)
+      : userData.value;
+  }
+});
+
+// Fungsi untuk membuat singkatan nama (misal "Budi Santoso" jadi "BS")
+const getInitials = (name) => {
+  if (!name || name === 'Memuat...') return 'UN';
+  const words = name.split(' ');
+  if (words.length > 1) {
+    return (words[0][0] + words[1][0]).toUpperCase();
+  }
+  return name.substring(0, 2).toUpperCase();
+};
+
+// Fungsi Logout
+const handleLogout = () => {
+  const token = useCookie('auth_token');
+  const user = useCookie('user_data');
+
+  token.value = null;
+  user.value = null;
+
+  // Arahkan ke halaman login
+  navigateTo('/login');
+};
 </script>

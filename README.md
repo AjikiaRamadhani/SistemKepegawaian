@@ -1,95 +1,213 @@
-# Nuxt 4 + Tabler Admin Dashboard Boilerplate
+# Sistem Informasi Kepegawaian - JMC
 
-Boilerplate admin dashboard menggunakan **Nuxt 4** dengan **Tabler UI v1.0.0-beta24**.
+Sistem informasi mini untuk pengelolaan data pegawai dan tunjangan transport.
+Terdiri dari 2 bagian terpisah yang harus dijalankan bersamaan:
 
-## Memulai
+- **Backend**: Node.js + Express + MariaDB/MySQL (folder `backend/`)
+- **Frontend**: Nuxt 4 + Tabler UI (folder root project)
 
-### 1. Install dependencies
+---
+
+## 1. Prasyarat (Prerequisite)
+
+Pastikan sudah terinstall di komputer kamu:
+
+| Tools | Versi Minimal | Catatan |
+|---|---|---|
+| Node.js | LTS (20.x atau lebih baru) | Cek dengan `node --version` |
+| NPM | Bundled dengan Node.js | Cek dengan `npm --version` |
+| MariaDB / MySQL | 10.x / 8.x | Bisa pakai XAMPP/Laragon untuk kemudahan lokal |
+| Git | Versi apapun | Untuk clone repo |
+
+---
+
+## 2. Setup Database
+
+### 2.1. Buat database
+
+Buka phpMyAdmin atau MySQL client, buat database baru:
+
+```sql
+CREATE DATABASE db_pegawai;
+```
+
+### 2.2. Import struktur & data awal
+
+Import file `db_pegawai.sql` (dump utama) ke database `db_pegawai` yang baru dibuat.
+
+Lewat phpMyAdmin: pilih database `db_pegawai` → tab **Import** → pilih file `db_pegawai.sql` → **Go**.
+
+Lewat command line:
+```bash
+mysql -u root -p db_pegawai < db_pegawai.sql
+```
+
+### 2.3. Jalankan migration tambahan
+
+Beberapa perubahan struktur tabel dilakukan setelah dump awal dibuat. Jalankan **secara berurutan**:
 
 ```bash
+mysql -u root -p db_pegawai < migration_wilayah.sql
+```
+
+> `migration_wilayah.sql` mengganti kolom `id_kecamatan` (yang merujuk ke tabel lokal `master_wilayah` yang kosong) menjadi 3 kolom teks (`kecamatan`, `kabupaten`, `provinsi`) yang diisi langsung dari API Wilayah Indonesia (emsifa) saat pegawai ditambahkan/diedit lewat form.
+
+### 2.4. Seed data hak akses (role_permission)
+
+Tabel `role_permission` menyimpan matriks hak akses per role (Superadmin, Manager HRD, Admin HRD) dan **wajib diisi** agar sistem RBAC berfungsi:
+
+```bash
+mysql -u root -p db_pegawai < seed_role_permission.sql
+```
+
+> Sesuai instruksi soal, perubahan hak akses dilakukan langsung di tabel ini lewat database, bukan lewat UI.
+
+---
+
+## 3. Setup Backend
+
+```bash
+cd backend
 npm install
 ```
 
-### 2. Konfigurasi `.env`
+### 3.1. Konfigurasi `.env`
 
-Edit `.env` untuk mengatur nama aplikasi dan nama client:
+Buat file `.env` di folder `backend/` (atau copy dari `.env.example` jika tersedia):
 
 ```bash
-APP_NAME=NAME_APP_HERE
-APP_CLIENT=NAME_CLIENT_HERE
+# Konfigurasi Server
+PORT=5000
+
+# Konfigurasi Database MariaDB/MySQL
+DB_HOST=localhost
+DB_USER=root
+DB_PASSWORD=
+DB_NAME=db_pegawai
+
+# Kunci Rahasia JWT & Captcha
+JWT_SECRET=ganti_dengan_string_acak_yang_panjang_dan_unik
+RECAPTCHA_SECRET_KEY=isi_dengan_secret_key_recaptcha_kamu
 ```
 
-### 3. Jalankan development server
+> **Penting**: `JWT_SECRET` jangan dibiarkan dengan nilai contoh/placeholder pada lingkungan produksi. Gunakan string acak yang panjang (misal hasil `openssl rand -hex 32`).
+
+### 3.2. Seed akun Superadmin pertama
+
+Karena tabel `user` butuh minimal satu akun untuk bisa login pertama kali, jalankan:
+
+```bash
+node seed.js
+```
+
+Ini akan membuat akun dengan kredensial:
+
+| Username | Password |
+|---|---|
+| `superadmin` | `Admin123!` |
+
+> Segera ganti password ini setelah login pertama kali lewat halaman My Profile, terutama jika project akan dipakai di luar lingkungan testing.
+
+### 3.3. Jalankan server backend
 
 ```bash
 npm run dev
 ```
 
-Buka [http://localhost:3000](http://localhost:3000)
+Server berjalan di `http://localhost:5000`. Dokumentasi API (Swagger) tersedia di:
 
-### 4. Build untuk production
+```
+http://localhost:5000/api-docs
+```
+
+---
+
+## 4. Setup Frontend
+
+Buka terminal baru (biarkan backend tetap berjalan), lalu dari folder root project:
 
 ```bash
-npm run build
+npm install
+```
+
+### 4.1. Konfigurasi `.env`
+
+Buat file `.env` di folder root:
+
+```bash
+APP_NAME=Sistem Informasi Kepegawaian
+APP_CLIENT=JMC IT Consultant
+
+NUXT_PUBLIC_RECAPTCHA_SITE_KEY=isi_dengan_site_key_recaptcha_kamu
+```
+
+### 4.2. Jalankan development server
+
+```bash
+npm run dev
+```
+
+Buka [http://localhost:3000](http://localhost:3000) di browser.
+
+---
+
+## 5. Kredensial Akun untuk Testing
+
+Setelah `node seed.js` dijalankan, kamu punya 1 akun Superadmin. Untuk role lain (Manager HRD, Admin HRD), buat lewat menu **Manajemen User** setelah login sebagai Superadmin — sistem akan menggenerate password otomatis yang ditampilkan satu kali di layar.
+
+| Role | Cara Mendapatkan Akun |
+|---|---|
+| Superadmin | Hasil `node seed.js` (lihat tabel di atas) |
+| Manager HRD | Dibuat manual via menu Manajemen User (pilih role "Manager HRD") |
+| Admin HRD | Dibuat manual via menu Manajemen User (pilih role "Admin HRD") |
+
+---
+
+## 6. Struktur Project (Ringkas)
+
+```
+.
+├── app/                        # Frontend Nuxt
+│   ├── pages/                  # Routing berbasis file
+│   │   ├── pegawai/            # Modul Data Pegawai
+│   │   ├── tunjangan/          # Modul Tunjangan Transport
+│   │   ├── user/               # Kelola User & Kelola Role
+│   │   └── log/                # Modul Log Aktivitas
+│   ├── features/               # Komponen form per modul
+│   ├── components/layout/       # Sidebar, Header, Breadcrumb
+│   ├── data/                   # Konfigurasi menu sidebar
+│   └── utils/                  # Helper format tanggal, rupiah, dll
+│
+├── backend/                     # Backend Express
+│   ├── controllers/             # Logic per modul
+│   ├── routes/                  # Definisi endpoint + dokumentasi Swagger
+│   ├── middleware/              # Auth (JWT), RBAC, Logging
+│   ├── config/db.js             # Koneksi database
+│   └── server.js                # Entry point backend
+│
+├── db_pegawai.sql               # Dump database utama
+├── migration_wilayah.sql        # Migration kolom wilayah (lihat 2.3)
+└── seed_role_permission.sql     # Seed hak akses per role (lihat 2.4)
 ```
 
 ---
 
-## Konfigurasi Menu Sidebar
+## 7. Troubleshooting Umum
 
-Edit `app/data/menu.js` untuk menambah/mengubah/menghapus menu:
-
-```js
-export const menuItems = [
-  {
-    title: "Dashboard",
-    icon: IconLayoutDashboardFilled, // Tabler Icons
-    to: "/",
-  },
-  {
-    title: "Menu dengan Submenu",
-    icon: IconUserFilled,
-    children: [
-      // Array children = dropdown menu
-      { title: "Submenu 1", to: "/menu/sub1" },
-      { title: "Submenu 2", to: "/menu/sub2" },
-    ],
-  },
-];
-```
-
-Tabler Icons bisa dilihat di: https://tabler.io/icons
+| Masalah | Kemungkinan Sebab |
+|---|---|
+| `Cannot find module '../middleware/xxx'` | File middleware belum ditaruh di folder `backend/middleware/` yang benar |
+| Selalu dapat `403 Forbidden` di semua endpoint | Tabel `role_permission` belum di-seed, atau token JWT lama (login ulang setelah update) |
+| Login berhasil tapi langsung logout lagi | Token JWT default berlaku 3 menit jika "Remember Me" tidak dicentang (sesuai soal) |
+| Dropdown Kecamatan/Kabupaten/Provinsi kosong | API eksternal emsifa.com sedang tidak bisa diakses, atau koneksi internet bermasalah |
+| `Gagal terkoneksi ke database` saat start backend | Cek `.env` di folder `backend/`, pastikan MariaDB/MySQL service aktif |
 
 ---
 
-## Dark Mode
+## 8. Catatan Pengembangan
 
-Dark mode otomatis tersimpan di `localStorage`. Toggle tersedia di navbar kanan atas.
+Beberapa hal yang diketahui masih merupakan area pengembangan lanjutan (bukan bug, melainkan keterbatasan scope/waktu pengerjaan):
 
-Implementasi via composable `useTheme()`:
-
-```js
-const { isDark, toggleTheme, initTheme } = useTheme();
-```
-
----
-
-## Menambah Halaman Baru
-
-1. Buat file di `app/pages/nama-halaman/index.vue`
-2. Tambahkan `definePageMeta({ title: 'Judul Halaman' })`
-3. Tambahkan menu di `app/data/menu.js`
-
-```vue
-<template>
-  <div>
-    <!-- konten halaman -->
-  </div>
-</template>
-
-<script setup>
-definePageMeta({
-  title: "Halaman Baru",
-});
-</script>
-```
+- Tombol export PDF/Excel pada daftar pegawai belum diimplementasikan.
+- Upload foto pegawai belum terhubung ke backend (kolom `foto_pegawai` tersedia di database, namun form belum mengirim file).
+- Captcha pada form login bersifat sederhana (client-side), bukan menggunakan Google reCAPTCHA meskipun dependency `vue-recaptcha` sudah tersedia di project.

@@ -1,9 +1,111 @@
+<script setup>
+import { ref, reactive, onMounted } from 'vue';
+import { IconSearch } from "@tabler/icons-vue";
+import { formatDateTimeID } from "~/utils/formatDate.js";
+
+definePageMeta({
+  title: "Log Aktifitas",
+});
+
+useSeoMeta({
+  title: "Log Aktifitas",
+});
+
+const isLoading = ref(true);
+const logList = ref([]);
+const pagination = ref({ page: 1, limit: 10, total: 0, total_pages: 1 });
+
+const filters = reactive({
+  search: '',
+  tanggal_dari: '',
+  tanggal_sampai: '',
+  page: 1,
+  limit: 10,
+});
+
+let searchDebounceTimer = null;
+const onSearchInput = (value) => {
+  filters.search = value;
+  filters.page = 1;
+  clearTimeout(searchDebounceTimer);
+  searchDebounceTimer = setTimeout(() => fetchLogs(), 400);
+};
+
+const fetchLogs = async () => {
+  isLoading.value = true;
+  try {
+    const token = useCookie('auth_token');
+    const query = {
+      page: filters.page,
+      limit: filters.limit,
+    };
+    if (filters.search) query.search = filters.search;
+    if (filters.tanggal_dari) query.tanggal_dari = filters.tanggal_dari;
+    if (filters.tanggal_sampai) query.tanggal_sampai = filters.tanggal_sampai;
+
+    const response = await $fetch('http://localhost:5000/api/log', {
+      headers: { Authorization: `Bearer ${token.value}` },
+      query
+    });
+    logList.value = response.data || [];
+    if (response.pagination) pagination.value = response.pagination;
+  } catch (error) {
+    console.error('Gagal mengambil data log:', error);
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+const onFilterChange = () => {
+  filters.page = 1;
+  fetchLogs();
+};
+
+const goToPage = (page) => {
+  if (page < 1 || page > pagination.value.total_pages) return;
+  filters.page = page;
+  fetchLogs();
+};
+
+const visiblePages = (current, total) => {
+  const range = [];
+  const start = Math.max(1, current - 2);
+  const end = Math.min(total, current + 2);
+  for (let i = start; i <= end; i++) range.push(i);
+  return range;
+};
+
+onMounted(() => {
+  fetchLogs();
+});
+</script>
+
 <template>
   <div class="card">
     <div class="card-header">
-      <div class="ms-auto">
-        <div class="input-group">
-          <input type="text" class="form-control" placeholder="Cari Data ..." />
+      <div class="d-flex gap-2 ms-auto flex-wrap">
+        <input
+          type="date"
+          class="form-control"
+          style="width: 160px"
+          v-model="filters.tanggal_dari"
+          @change="onFilterChange"
+        />
+        <input
+          type="date"
+          class="form-control"
+          style="width: 160px"
+          v-model="filters.tanggal_sampai"
+          @change="onFilterChange"
+        />
+        <div class="input-group" style="width: 220px">
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Cari Data ..."
+            :value="filters.search"
+            @input="onSearchInput($event.target.value)"
+          />
           <button class="btn" type="button">
             <IconSearch stroke="{2}" />
           </button>
@@ -16,65 +118,48 @@
           <tr>
             <th width="5">No</th>
             <th>Nama User</th>
-            <th>Modul</th>
-            <th>Aksi</th>
+            <th>Modul/Aktivitas</th>
+            <th>Keterangan</th>
             <th>Timestamp</th>
           </tr>
         </thead>
-        <tbody v-for="(item, index) in logAktivitas" :key="item.id">
-          <tr>
-            <td class="text-center">{{ index + 1 }}</td>
-            <td>{{ item.user }}</td>
-            <td>{{ item.modul }}</td>
-            <td>{{ item.aksi }}</td>
-            <td>{{ formatDateTimeID(item.timestamp) }}</td>
+        <tbody>
+          <tr v-if="isLoading">
+            <td colspan="5" class="text-center py-4">Memuat data...</td>
+          </tr>
+          <tr v-else-if="logList.length === 0">
+            <td colspan="5" class="text-center py-4">Belum ada log aktivitas.</td>
+          </tr>
+          <tr v-else v-for="(item, index) in logList" :key="item.id">
+            <td class="text-center">{{ (pagination.page - 1) * pagination.limit + index + 1 }}</td>
+            <td>{{ item.nama_user || 'Tidak diketahui' }}</td>
+            <td>{{ item.title }}</td>
+            <td>{{ item.content }}</td>
+            <td>{{ formatDateTimeID(item.created_at) }}</td>
           </tr>
         </tbody>
       </table>
     </div>
-    <div class="card-footer d-flex align-items-center">
-      <ul class="pagination ms-auto m-0">
-        <li class="page-item"><a class="page-link" href="#">1</a></li>
-        <li class="page-item active"><a class="page-link" href="#">2</a></li>
-        <li class="page-item"><a class="page-link" href="#">3</a></li>
-        <li class="page-item"><a class="page-link" href="#">4</a></li>
-        <li class="page-item"><a class="page-link" href="#">5</a></li>
-        <li class="page-item">
-          <a class="page-link" href="#">
-            next
-            <!-- Download SVG icon from http://tabler-icons.io/i/chevron-right -->
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="icon"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              stroke-width="2"
-              stroke="currentColor"
-              fill="none"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-              <path d="M9 6l6 6l-6 6"></path>
-            </svg>
-          </a>
+    <div class="card-footer d-flex align-items-center justify-content-between">
+      <div class="text-secondary small">
+        Menampilkan {{ logList.length }} dari {{ pagination.total }} data
+      </div>
+      <ul class="pagination m-0">
+        <li class="page-item" :class="{ disabled: pagination.page <= 1 }">
+          <a class="page-link" href="#" @click.prevent="goToPage(pagination.page - 1)">Sebelumnya</a>
+        </li>
+        <li
+          v-for="p in visiblePages(pagination.page, pagination.total_pages)"
+          :key="p"
+          class="page-item"
+          :class="{ active: p === pagination.page }"
+        >
+          <a class="page-link" href="#" @click.prevent="goToPage(p)">{{ p }}</a>
+        </li>
+        <li class="page-item" :class="{ disabled: pagination.page >= pagination.total_pages }">
+          <a class="page-link" href="#" @click.prevent="goToPage(pagination.page + 1)">Berikutnya</a>
         </li>
       </ul>
     </div>
   </div>
 </template>
-
-<script setup>
-definePageMeta({
-  title: "Log Aktifitas",
-});
-
-useSeoMeta({
-  title: "Log Aktifitas",
-});
-
-import { IconSearch } from "@tabler/icons-vue";
-import { logAktivitas } from "~/data/log-aktivitas.js";
-import { formatDateTimeID } from "~/utils/formatDate.js";
-</script>

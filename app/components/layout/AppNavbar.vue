@@ -79,21 +79,25 @@
                 <i class="ti ti-user" style="font-size: 1.25rem"></i>
               </span>
               <div class="d-none d-xl-block ps-2">
-                <div>Administrator</div>
-                <div class="mt-1 small text-secondary">admin@example.com</div>
+                <!-- Teks statis diubah menjadi dinamis -->
+                <div>{{ activeUser.nama }}</div>
+                <div class="mt-1 small text-secondary">{{ activeUser.role || activeUser.username }}</div>
               </div>
             </a>
             <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-              <a href="#" class="dropdown-item">
+              <!-- Fitur profil dan pengaturan kita beri alert sementara -->
+              <a href="#" class="dropdown-item" @click.prevent="alert('Fitur Profil sedang dalam tahap pengembangan')">
                 <i class="ti ti-user me-2"></i>Profil
               </a>
-              <a href="#" class="dropdown-item">
+              <a href="#" class="dropdown-item" @click.prevent="alert('Fitur Pengaturan sedang dalam tahap pengembangan')">
                 <i class="ti ti-settings me-2"></i>Pengaturan
               </a>
               <div class="dropdown-divider"></div>
-              <NuxtLink to="/auth/login" class="dropdown-item text-danger">
+              
+              <!-- Tombol Keluar memanggil fungsi handleLogout -->
+              <a href="#" class="dropdown-item text-danger" @click.prevent="handleLogout">
                 <i class="ti ti-logout me-2"></i>Keluar
-              </NuxtLink>
+              </a>
             </div>
           </div>
         </div>
@@ -103,8 +107,38 @@
 </template>
 
 <script setup>
+import { ref, onMounted } from 'vue';
 import { useSidebar } from "@/composables/useSidebar";
 
 const { isDark, toggleTheme } = useTheme();
 const { toggleSidebar } = useSidebar();
+
+// 1. Siapkan state untuk menampung data user
+const activeUser = ref({
+  nama: 'Memuat...',
+  role: 'Memuat...'
+});
+
+// 2. Ambil data dari cookie saat komponen dimuat
+onMounted(() => {
+  const userData = useCookie('user_data');
+  if (userData.value) {
+    activeUser.value = typeof userData.value === 'string'
+      ? JSON.parse(userData.value)
+      : userData.value;
+  }
+});
+
+// 3. Fungsi eksekusi Logout
+const handleLogout = () => {
+  const token = useCookie('auth_token');
+  const user = useCookie('user_data');
+
+  // Hapus tiket dan identitas dari peramban
+  token.value = null;
+  user.value = null;
+
+  // Arahkan kembali ke halaman login (sesuai route sebelumnya di kodemu)
+  navigateTo('/auth/login');
+};
 </script>
