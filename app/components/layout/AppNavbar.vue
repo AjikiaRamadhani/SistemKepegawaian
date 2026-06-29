@@ -85,10 +85,9 @@
               </div>
             </a>
             <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-              <!-- Fitur profil dan pengaturan kita beri alert sementara -->
-              <a href="#" class="dropdown-item" @click.prevent="alert('Fitur Profil sedang dalam tahap pengembangan')">
+              <NuxtLink to="/profile" class="dropdown-item">
                 <i class="ti ti-user me-2"></i>Profil
-              </a>
+              </NuxtLink>
               <a href="#" class="dropdown-item" @click.prevent="alert('Fitur Pengaturan sedang dalam tahap pengembangan')">
                 <i class="ti ti-settings me-2"></i>Pengaturan
               </a>

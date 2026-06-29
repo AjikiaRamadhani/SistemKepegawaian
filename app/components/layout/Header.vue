@@ -136,9 +136,9 @@
             </div>
           </a>
           <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-            <a href="#" class="dropdown-item" @click.prevent="alert('Fitur My Profile masih dalam tahap pengembangan')">
+            <NuxtLink to="/profile" class="dropdown-item">
               <i class="bi bi-person me-2"></i> My Profile
-            </a>
+            </NuxtLink>
             <a href="#" class="dropdown-item" @click.prevent="alert('Fitur Change Password masih dalam tahap pengembangan')">
               <i class="bi bi-key me-2"></i> Change Password
             </a>

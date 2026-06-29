@@ -208,6 +208,5 @@ Setelah `node seed.js` dijalankan, kamu punya 1 akun Superadmin. Untuk role lain
 
 Beberapa hal yang diketahui masih merupakan area pengembangan lanjutan (bukan bug, melainkan keterbatasan scope/waktu pengerjaan):
 
-- Tombol export PDF/Excel pada daftar pegawai belum diimplementasikan.
 - Upload foto pegawai belum terhubung ke backend (kolom `foto_pegawai` tersedia di database, namun form belum mengirim file).
 - Captcha pada form login bersifat sederhana (client-side), bukan menggunakan Google reCAPTCHA meskipun dependency `vue-recaptcha` sudah tersedia di project.

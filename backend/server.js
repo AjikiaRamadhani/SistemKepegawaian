@@ -13,6 +13,7 @@ const tunjanganRoutes = require('./routes/tunjanganRoutes'); // Memanggil route 
 const userRoutes = require('./routes/userRoutes'); // Memanggil route user
 const roleRoutes = require('./routes/roleRoutes'); // Memanggil route role (Kelola Role)
 const logRoutes = require('./routes/logRoutes'); // Memanggil route log (Modul Log)
+const profileRoutes = require('./routes/profileRoutes'); // Memanggil route my profile
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -56,6 +57,7 @@ app.use('/api/tunjangan', tunjanganRoutes); // Menggunakan route tunjangan
 app.use('/api/user', userRoutes); // Menggunakan route user
 app.use('/api/role', roleRoutes); // Menggunakan route role (Kelola Role)
 app.use('/api/log', logRoutes); // Menggunakan route log (Modul Log)
+app.use('/api/profile', profileRoutes); // Menggunakan route my profile
 
 // Route dasar untuk tes
 app.get('/', (req, res) => {
