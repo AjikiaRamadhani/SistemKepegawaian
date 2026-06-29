@@ -111,7 +111,7 @@ const handleLogin = async () => {
   // 2. JIKA CAPTCHA BENAR, KIRIM KE BACKEND
   isLoading.value = true;
   try {
-    const response = await $fetch('http://localhost:5000/api/auth/login', {
+    const response = await $fetch('/_/backend/api/auth/login', {
       method: 'POST',
       body: {
         identifier: form.value.identifier,
