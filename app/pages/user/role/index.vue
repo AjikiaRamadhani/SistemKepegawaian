@@ -1,4 +1,5 @@
 <script setup>
+const apiBase = useRuntimeConfig().public.apiBase;
 import { ref, onMounted, computed } from 'vue';
 import { IconSearch } from "@tabler/icons-vue";
 
@@ -18,7 +19,7 @@ const fetchRoles = async () => {
   isLoading.value = true;
   try {
     const token = useCookie('auth_token');
-    const response = await $fetch('http://localhost:5000/api/role', {
+    const response = await $fetch(`${apiBase}/api/role`, {
       headers: { Authorization: `Bearer ${token.value}` }
     });
     roleList.value = response.data || [];

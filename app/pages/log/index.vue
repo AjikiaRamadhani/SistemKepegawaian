@@ -1,4 +1,5 @@
 <script setup>
+const apiBase = useRuntimeConfig().public.apiBase;
 import { ref, reactive, onMounted } from 'vue';
 import { IconSearch } from "@tabler/icons-vue";
 import { formatDateTimeID } from "~/utils/formatDate.js";
@@ -43,7 +44,7 @@ const fetchLogs = async () => {
     if (filters.tanggal_dari) query.tanggal_dari = filters.tanggal_dari;
     if (filters.tanggal_sampai) query.tanggal_sampai = filters.tanggal_sampai;
 
-    const response = await $fetch('http://localhost:5000/api/log', {
+    const response = await $fetch(`${apiBase}/api/log`, {
       headers: { Authorization: `Bearer ${token.value}` },
       query
     });

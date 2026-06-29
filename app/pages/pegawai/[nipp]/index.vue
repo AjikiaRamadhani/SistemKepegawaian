@@ -1,4 +1,5 @@
 <script setup>
+const apiBase = useRuntimeConfig().public.apiBase;
 import { ref, onMounted } from 'vue';
 import { IconUserCircle } from "@tabler/icons-vue";
 import { formatDateID } from "~/utils/formatDate.js";
@@ -27,7 +28,7 @@ const fetchDetail = async () => {
   errorMessage.value = '';
   try {
     const token = useCookie('auth_token');
-    const response = await $fetch(`http://localhost:5000/api/pegawai/${pegawaiId}`, {
+    const response = await $fetch(`${apiBase}/api/pegawai/${pegawaiId}`, {
       headers: { Authorization: `Bearer ${token.value}` }
     });
     pegawai.value = response.data;

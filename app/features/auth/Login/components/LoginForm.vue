@@ -74,6 +74,7 @@ import { IconRefresh } from "@tabler/icons-vue";
 const isLoading = ref(false);
 const currentCaptcha = ref('');
 const captchaError = ref('');
+const apiBase = useRuntimeConfig().public.apiBase;
 
 // === PENAMBAHAN STATE REMEMBER ME ===
 const form = ref({
@@ -111,7 +112,7 @@ const handleLogin = async () => {
   // 2. JIKA CAPTCHA BENAR, KIRIM KE BACKEND
   isLoading.value = true;
   try {
-    const response = await $fetch('http://localhost:5000/api/auth/login', {
+    const response = await $fetch(`${apiBase}/api/auth/login`, {
       method: 'POST',
       body: {
         identifier: form.value.identifier,

@@ -1,4 +1,5 @@
 <script setup>
+const apiBase = useRuntimeConfig().public.apiBase;
 import { ref, onMounted } from 'vue';
 import { IconUsers, IconHourglassHigh, IconFileCheck, IconIdBadge2 } from '@tabler/icons-vue';
 
@@ -82,7 +83,7 @@ const fetchDashboardData = async () => {
     // Pakai endpoint /api/dashboard yang backend sudah hitung semuanya
     // (widget, chart, 5 pegawai terbaru) lewat query SQL -- lebih efisien
     // daripada ambil semua data pegawai lalu hitung manual di frontend.
-    const response = await $fetch('http://localhost:5000/api/dashboard', {
+    const response = await $fetch(`${apiBase}/api/dashboard`, {
       method: 'GET',
       headers: { Authorization: `Bearer ${token.value}` }
     });

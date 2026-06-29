@@ -1,4 +1,5 @@
 <script setup>
+const apiBase = useRuntimeConfig().public.apiBase;
 import { ref, onMounted } from 'vue';
 import { formatDateTimeID } from "~/utils/formatDate.js";
 
@@ -18,7 +19,7 @@ const fetchProfile = async () => {
   isLoading.value = true;
   try {
     const token = useCookie('auth_token');
-    const response = await $fetch('http://localhost:5000/api/profile', {
+    const response = await $fetch(`${apiBase}/api/profile`, {
       headers: { Authorization: `Bearer ${token.value}` }
     });
     profile.value = response.data;
@@ -41,7 +42,7 @@ const submitEmail = async () => {
   emailMessage.value = '';
   try {
     const token = useCookie('auth_token');
-    await $fetch('http://localhost:5000/api/profile', {
+    await $fetch(`${apiBase}/api/profile`, {
       method: 'PUT',
       headers: { Authorization: `Bearer ${token.value}` },
       body: { email: emailForm.value }
@@ -88,7 +89,7 @@ const submitPassword = async () => {
   isSubmittingPassword.value = true;
   try {
     const token = useCookie('auth_token');
-    await $fetch('http://localhost:5000/api/profile', {
+    await $fetch(`${apiBase}/api/profile`, {
       method: 'PUT',
       headers: { Authorization: `Bearer ${token.value}` },
       body: {
@@ -118,12 +119,6 @@ onMounted(() => {
   <div v-else-if="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
 
   <div v-else-if="profile" class="row g-3">
-    <div class="col-12">
-      <NuxtLink to="/" class="btn btn-outline-primary">
-        <i class="bi bi-arrow-left me-2"></i>Kembali ke Dashboard
-      </NuxtLink>
-    </div>
-
     <!-- INFO PROFIL (Read Only) -->
     <div class="col-lg-6">
       <div class="card">

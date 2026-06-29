@@ -1,4 +1,5 @@
 <script setup>
+const apiBase = useRuntimeConfig().public.apiBase;
 import { ref, reactive, onMounted } from 'vue';
 import {
   IconPencil,
@@ -26,7 +27,6 @@ useSeoMeta({
 // === STATE MANAGEMENT ===
 const pegawaiList = ref([]);
 const isLoading = ref(true);
-const isDownloading = ref(false);
 const idHapus = ref(null);
 const userRole = ref(null); // Menyimpan role user yang login
 const jabatanOptions = ref([]); // Untuk dropdown filter jabatan (multi select)
@@ -80,7 +80,7 @@ const fetchPegawai = async () => {
     if (filters.masa_kerja_min !== '') query.masa_kerja_min = filters.masa_kerja_min;
     if (filters.masa_kerja_max !== '') query.masa_kerja_max = filters.masa_kerja_max;
 
-    const response = await $fetch('http://localhost:5000/api/pegawai', {
+    const response = await $fetch(`${apiBase}/api/pegawai`, {
       method: 'GET',
       headers: {
         Authorization: `Bearer ${token.value}`
@@ -101,7 +101,7 @@ const fetchPegawai = async () => {
 const fetchJabatanOptions = async () => {
   try {
     const token = useCookie('auth_token');
-    const response = await $fetch('http://localhost:5000/api/pegawai/master/jabatan', {
+    const response = await $fetch(`${apiBase}/api/pegawai/master/jabatan`, {
       headers: { Authorization: `Bearer ${token.value}` }
     });
     jabatanOptions.value = response.data || [];
@@ -110,102 +110,12 @@ const fetchJabatanOptions = async () => {
   }
 };
 
-const escapePdfText = (value) => {
-  return String(value ?? '')
-    .replace(/\\/g, '\\\\')
-    .replace(/\(/g, '\\(')
-    .replace(/\)/g, '\\)')
-    .replace(/\r?\n/g, ' ');
-};
-
-const buildSimplePdf = (lines) => {
-  const contentStream = lines
-    .map((line, index) => `BT /F1 12 Tf 50 ${760 - index * 15} Td (${escapePdfText(line)}) Tj ET`)
-    .join('\n');
-
-  const objects = [
-    '<< /Type /Catalog /Pages 2 0 R >>',
-    '<< /Type /Pages /Kids [3 0 R] /Count 1 >>',
-    '<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 5 0 R /Resources << /Font << /F1 4 0 R >> >> >>',
-    '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>',
-    `<< /Length ${contentStream.length} >>\nstream\n${contentStream}\nendstream`
-  ];
-
-  const chunks = ['%PDF-1.4\n'];
-  const offsets = [0];
-
-  objects.forEach((obj, index) => {
-    offsets.push(chunks.join('').length);
-    chunks.push(`${index + 1} 0 obj\n`);
-    chunks.push(obj);
-    chunks.push('\nendobj\n');
-  });
-
-  const xrefOffset = chunks.join('').length;
-  chunks.push(`xref\n0 ${objects.length + 1}\n`);
-  chunks.push('0000000000 65535 f \n');
-  offsets.slice(1).forEach((offset) => {
-    chunks.push(`${String(offset).padStart(10, '0')} 00000 n \n`);
-  });
-  chunks.push(`trailer\n<< /Size ${objects.length + 1} /Root 1 0 R >>\nstartxref\n${xrefOffset}\n%%EOF`);
-
-  return chunks.join('');
-};
-
-const downloadPegawaiDetail = async (pegawaiId) => {
-  isDownloading.value = true;
-  try {
-    const token = useCookie('auth_token');
-    const response = await $fetch(`http://localhost:5000/api/pegawai/${pegawaiId}`, {
-      headers: { Authorization: `Bearer ${token.value}` }
-    });
-
-    const pegawai = response.data || {};
-    const lines = [
-      'DETAIL PEGAWAI',
-      '',
-      `NIP: ${pegawai.nip || '-'}`,
-      `Nama: ${pegawai.nama_pegawai || '-'}`,
-      `Email: ${pegawai.email || '-'}`,
-      `Nomor HP: ${pegawai.nomor_hp || '-'}`,
-      `Jenis Kelamin: ${pegawai.jenis_kelamin || '-'}`,
-      `Tempat, Tanggal Lahir: ${pegawai.tempat_lahir || '-'}, ${pegawai.tanggal_lahir || '-'}`,
-      `Alamat: ${pegawai.alamat_lengkap || '-'}`,
-      `Kecamatan: ${pegawai.kecamatan || '-'}`,
-      `Kabupaten: ${pegawai.kabupaten || '-'}`,
-      `Provinsi: ${pegawai.provinsi || '-'}`,
-      `Jabatan: ${pegawai.nama_jabatan || '-'}`,
-      `Departemen: ${pegawai.nama_departemen || '-'}`,
-      `Status Kontrak: ${pegawai.status_kontrak || '-'}`,
-      `Status: ${pegawai.status || '-'}`,
-      `Tanggal Masuk: ${pegawai.tanggal_masuk ? formatDateID(pegawai.tanggal_masuk) : '-'}`,
-      `Pendidikan: ${pegawai.pendidikan && pegawai.pendidikan.length > 0 ? pegawai.pendidikan.map((item) => `${item.tingkat} - ${item.sekolah} (${item.tahun})`).join(', ') : '-'}`
-    ];
-
-    const pdfContent = buildSimplePdf(lines);
-    const blob = new Blob([pdfContent], { type: 'application/pdf' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `detail-pegawai-${pegawai.nip || pegawaiId}.pdf`;
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-    URL.revokeObjectURL(url);
-  } catch (error) {
-    console.error('Gagal mengunduh detail pegawai:', error);
-    alert('Gagal mengunduh detail pegawai.');
-  } finally {
-    isDownloading.value = false;
-  }
-};
-
 const konfirmasiHapus = async () => {
   if (!idHapus.value) return;
   
   try {
     const token = useCookie('auth_token');
-    await $fetch(`http://localhost:5000/api/pegawai/${idHapus.value}`, {
+    await $fetch(`${apiBase}/api/pegawai/${idHapus.value}`, {
       method: 'DELETE',
       headers: {
         Authorization: `Bearer ${token.value}`
@@ -429,17 +339,11 @@ onMounted(() => {
                     </span>
                   </NuxtLink>
 
-                  <button
-                    type="button"
-                    class="btn btn-link p-0 text-dark"
-                    :disabled="isDownloading"
-                    @click="downloadPegawaiDetail(item.id)"
-                    aria-label="Download"
-                  >
+                  <a href="#" class="text-dark">
                     <span data-bs-toggle="tooltip" title="Download">
                       <IconCloudDownload stroke="{1}" size="20" />
                     </span>
-                  </button>
+                  </a>
 
                   <!-- RBAC: Hapus data dihilangkan karena Admin & Manager dilarang menghapus (v-if="false") -->
                   <a

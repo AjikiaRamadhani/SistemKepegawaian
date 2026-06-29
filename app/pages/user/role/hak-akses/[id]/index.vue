@@ -1,4 +1,5 @@
 <script setup>
+const apiBase = useRuntimeConfig().public.apiBase;
 import { ref, onMounted } from 'vue';
 import { IconCircleCheckFilled, IconXboxXFilled } from "@tabler/icons-vue";
 
@@ -21,7 +22,7 @@ const fetchDetail = async () => {
   isLoading.value = true;
   try {
     const token = useCookie('auth_token');
-    const response = await $fetch(`http://localhost:5000/api/role/${roleId}`, {
+    const response = await $fetch(`${apiBase}/api/role/${roleId}`, {
       headers: { Authorization: `Bearer ${token.value}` }
     });
     roleInfo.value = response.data.role;

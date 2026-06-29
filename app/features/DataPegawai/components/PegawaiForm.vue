@@ -246,6 +246,7 @@
 </template>
 
 <script setup>
+const apiBase = useRuntimeConfig().public.apiBase;
 import { ref, onMounted, computed } from 'vue';
 import { IconXboxXFilled } from "@tabler/icons-vue";
 
@@ -371,8 +372,8 @@ const submitData = async () => {
     form.value.kecamatan = kecamatanTerpilih ? kecamatanTerpilih.name : '';
     
     const url = isEditMode.value 
-      ? `http://localhost:5000/api/pegawai/${editId}` 
-      : 'http://localhost:5000/api/pegawai';
+      ? `${apiBase}/api/pegawai/${editId}` 
+      : `${apiBase}/api/pegawai`;
     const method = isEditMode.value ? 'PUT' : 'POST';
 
     await $fetch(url, {
@@ -415,7 +416,7 @@ onMounted(async () => {
       const token = useCookie('auth_token');
       // Ambil satu pegawai langsung berdasarkan ID (bukan fetch semua data lalu cari manual),
       // supaya tidak terdampak oleh pagination di endpoint daftar pegawai.
-      const response = await $fetch(`http://localhost:5000/api/pegawai/${editId}`, {
+      const response = await $fetch(`${apiBase}/api/pegawai/${editId}`, {
         headers: { Authorization: `Bearer ${token.value}` }
       });
 

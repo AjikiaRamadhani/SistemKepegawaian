@@ -1,4 +1,5 @@
 <script setup>
+const apiBase = useRuntimeConfig().public.apiBase;
 import { ref, onMounted, computed } from 'vue';
 import { IconSearch } from "@tabler/icons-vue";
 import { formatRupiah } from "~/utils/formatRupiah.js";
@@ -42,7 +43,7 @@ const fetchStatus = async () => {
   errorMessage.value = '';
   try {
     const token = useCookie('auth_token');
-    const response = await $fetch(`http://localhost:5000/api/tunjangan/cek/${bulan}/${tahun}`, {
+    const response = await $fetch(`${apiBase}/api/tunjangan/cek/${bulan}/${tahun}`, {
       headers: { Authorization: `Bearer ${token.value}` }
     });
 
@@ -77,7 +78,7 @@ const hitungTunjangan = async () => {
       jumlah_hari: parseInt(p.jumlah_hari, 10) || 0
     }));
 
-    await $fetch('http://localhost:5000/api/tunjangan/hitung', {
+    await $fetch(`${apiBase}/api/tunjangan/hitung`, {
       method: 'POST',
       headers: { Authorization: `Bearer ${token.value}` },
       body: { bulan, tahun, kehadiran }

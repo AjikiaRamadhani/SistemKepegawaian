@@ -1,4 +1,5 @@
 <script setup>
+const apiBase = useRuntimeConfig().public.apiBase;
 import { ref, reactive, onMounted, computed } from 'vue';
 import { IconPencil, IconPlus, IconSearch, IconTrash, IconToggleLeft, IconToggleRight } from "@tabler/icons-vue";
 
@@ -40,7 +41,7 @@ const fetchUsers = async () => {
     if (filters.id_role) query.id_role = filters.id_role;
     if (filters.status) query.status = filters.status;
 
-    const response = await $fetch('http://localhost:5000/api/user', {
+    const response = await $fetch(`${apiBase}/api/user`, {
       headers: { Authorization: `Bearer ${token.value}` },
       query
     });
@@ -55,7 +56,7 @@ const fetchUsers = async () => {
 const fetchRoles = async () => {
   try {
     const token = useCookie('auth_token');
-    const response = await $fetch('http://localhost:5000/api/user/roles', {
+    const response = await $fetch(`${apiBase}/api/user/roles`, {
       headers: { Authorization: `Bearer ${token.value}` }
     });
     roleOptions.value = response.data || [];
@@ -95,7 +96,7 @@ const onNamaSearchInput = (value) => {
     isSearchingPegawai.value = true;
     try {
       const token = useCookie('auth_token');
-      const response = await $fetch('http://localhost:5000/api/user/pegawai-suggest', {
+      const response = await $fetch(`${apiBase}/api/user/pegawai-suggest`, {
         headers: { Authorization: `Bearer ${token.value}` },
         query: { q: value.trim() }
       });
@@ -158,7 +159,7 @@ const submitAddUser = async () => {
   isSubmittingAdd.value = true;
   try {
     const token = useCookie('auth_token');
-    const response = await $fetch('http://localhost:5000/api/user', {
+    const response = await $fetch(`${apiBase}/api/user`, {
       method: 'POST',
       headers: { Authorization: `Bearer ${token.value}` },
       body: {
@@ -201,7 +202,7 @@ const submitEditUser = async () => {
   editErrorMessage.value = '';
   try {
     const token = useCookie('auth_token');
-    await $fetch(`http://localhost:5000/api/user/${editForm.id}`, {
+    await $fetch(`${apiBase}/api/user/${editForm.id}`, {
       method: 'PUT',
       headers: { Authorization: `Bearer ${token.value}` },
       body: {
@@ -227,7 +228,7 @@ const toggleStatus = async (user) => {
   }
   try {
     const token = useCookie('auth_token');
-    await $fetch(`http://localhost:5000/api/user/${user.id}/toggle-status`, {
+    await $fetch(`${apiBase}/api/user/${user.id}/toggle-status`, {
       method: 'PATCH',
       headers: { Authorization: `Bearer ${token.value}` }
     });
@@ -253,7 +254,7 @@ const executeDelete = async () => {
   if (!userToDelete.value) return;
   try {
     const token = useCookie('auth_token');
-    await $fetch(`http://localhost:5000/api/user/${userToDelete.value.id}`, {
+    await $fetch(`${apiBase}/api/user/${userToDelete.value.id}`, {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${token.value}` }
     });

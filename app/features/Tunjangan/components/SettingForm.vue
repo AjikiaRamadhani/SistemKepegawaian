@@ -74,6 +74,7 @@
 </template>
 
 <script setup>
+const apiBase = useRuntimeConfig().public.apiBase;
 import { ref, onMounted } from 'vue';
 
 definePageMeta({ title: "Setting Tunjangan Transport" });
@@ -116,7 +117,7 @@ onMounted(() => {
 const loadDataSetting = async () => {
   try {
     const token = useCookie('auth_token');
-    const response = await $fetch('http://localhost:5000/api/tunjangan/setting', {
+    const response = await $fetch(`${apiBase}/api/tunjangan/setting`, {
       headers: { Authorization: `Bearer ${token.value}` }
     });
 
@@ -177,7 +178,7 @@ const simpanPengaturan = async () => {
     };
 
     const token = useCookie('auth_token');
-    await $fetch('http://localhost:5000/api/tunjangan/setting', {
+    await $fetch(`${apiBase}/api/tunjangan/setting`, {
       method: 'PUT',
       headers: { Authorization: `Bearer ${token.value}` },
       body: payload
