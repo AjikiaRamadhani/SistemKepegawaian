@@ -345,14 +345,14 @@ onMounted(() => {
                     </span>
                   </a>
 
-                  <!-- RBAC: Hapus data dihilangkan karena Admin & Manager dilarang menghapus (v-if="false") -->
+                  <!-- RBAC: Hanya Admin HRD yang bisa menghapus data pegawai -->
                   <a
-                    v-if="false" 
+                    v-if="userRole === 3 || userRole === 'Admin HRD'"
                     href="#"
                     class="text-danger"
                     data-bs-toggle="modal"
                     data-bs-target="#modal-hapus"
-                    @click="idHapus = item.id"
+                    @click.prevent="idHapus = item.id"
                   >
                     <span data-bs-toggle="tooltip" title="Hapus">
                       <IconTrash stroke="{1}" size="20" />
