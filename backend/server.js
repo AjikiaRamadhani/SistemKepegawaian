@@ -69,3 +69,5 @@ app.listen(PORT, () => {
   console.log(`Server backend berjalan di http://localhost:${PORT}`);
   console.log(`📄 Dokumentasi API Swagger tersedia di http://localhost:${PORT}/api-docs`);
 });
+
+module.exports = app;

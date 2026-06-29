@@ -1,12 +1,8 @@
 {
-    "experimentalServices": {
-        "frontend": {
-            "routePrefix": "/",
-            "framework": "nuxtjs"
-        },
-        "backend": {
-            "root": "backend",
-            "routePrefix": "/_/backend"
-        }
+  "rewrites": [
+    {
+      "source": "/_/backend/:path*",
+      "destination": "/api/index"
     }
+  ]
 }
