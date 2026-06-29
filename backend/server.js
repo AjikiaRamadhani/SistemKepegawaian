@@ -22,6 +22,12 @@ const PORT = process.env.PORT || 5000;
 app.use(cors()); // Mengizinkan Nuxt untuk mengambil data
 app.use(express.json()); // Membaca body request berbentuk JSON
 app.use(express.urlencoded({ extended: true }));
+app.use((req, res, next) => {
+  if (req.url.startsWith('/_/backend')) {
+    req.url = req.url.replace('/_/backend', '');
+  }
+  next();
+});
 
 // --- SETUP SWAGGER ---
 const swaggerOptions = {
@@ -48,7 +54,17 @@ const swaggerOptions = {
 };
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
-// ---------------------
+const mysql = require('mysql2'); // atau menyesuaikan library yang kamu pakai
+const connection = mysql.createConnection({
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT || 4043, // Tambahkan baris port ini
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  ssl: {
+    rejectUnauthorized: false // Wajib ditambah karena MariaDB Cloud mewajibkan SSL
+  }
+});
 
 app.use('/api/auth', authRoutes); // Menggunakan route auth
 app.use('/api/dashboard', dashboardRoutes); // Menggunakan route dashboard
