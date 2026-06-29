@@ -65,9 +65,17 @@ app.get('/', (req, res) => {
 });
 
 // Menyalakan server
-app.listen(PORT, () => {
-  console.log(`Server backend berjalan di http://localhost:${PORT}`);
-  console.log(`📄 Dokumentasi API Swagger tersedia di http://localhost:${PORT}/api-docs`);
-});
+// process.env.VERCEL diset otomatis oleh Vercel di lingkungan production-nya.
+// Saat di Vercel, kita TIDAK perlu app.listen() karena Vercel sendiri yang
+// menangani request masuk lewat serverless function (lihat api/index.js).
+// app.listen() hanya dijalankan saat development lokal (npm run dev).
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`Server backend berjalan di http://localhost:${PORT}`);
+    console.log(`📄 Dokumentasi API Swagger tersedia di http://localhost:${PORT}/api-docs`);
+  });
+}
 
+// Export Express app supaya bisa di-require oleh api/index.js sebagai
+// serverless function handler di Vercel.
 module.exports = app;
